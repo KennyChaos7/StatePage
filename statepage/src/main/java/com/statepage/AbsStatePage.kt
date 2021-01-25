@@ -1,45 +1,27 @@
 package com.statepage
 
-import android.app.Activity
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-
-/**
- * @param layoutRes
- * @param coverView     要显示在哪个view之上, 用于动态设置statePage的大小
- */
-abstract class AbsStatePage(private val layoutRes: Int,private val coverView: View, private val listener: RetryListener?) {
-
-    private var contentView: View? = null
-    private lateinit var _bindKey: String
+import android.widget.FrameLayout
 
 
-    /**
-     * 是否遮挡整个页面
-     * 如果true, 则显示时候回会添加在android.R.id.content中
-     */
-//    var isCoverWholeView: Boolean = false
-//
-//    fun setIsCoverWholeView(isCoverWholeView: Boolean) {
-//        this.isCoverWholeView = isCoverWholeView
-//    }
+abstract class AbsStatePage(context: Context, layoutRes: Int) {
 
-    fun bind(activity: Activity) {
-        _bindKey = activity.localClassName
-        contentView = LayoutInflater.from(activity).inflate(layoutRes, null, false)
+    private val frameLayout: FrameLayout = FrameLayout(context)
+    private var _contentView: View
 
+    init {
+        val layoutParams = FrameLayout.LayoutParams(0,0)
+        frameLayout.layoutParams = layoutParams
+        _contentView = LayoutInflater.from(context).inflate(layoutRes, frameLayout, true)
     }
 
-
-    fun dismiss() {
-
+    fun setViewParamsAndHide(width: Int, height: Int) {
+        val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(width, height)
+        frameLayout.layoutParams = params
+        frameLayout.visibility = View.GONE
     }
 
-    fun getBindKey() = _bindKey
-
-    interface RetryListener {
-        fun startRetry()
-    }
-
-
+    fun toViewGroup() = frameLayout
 }
