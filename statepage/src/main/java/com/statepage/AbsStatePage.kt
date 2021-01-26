@@ -25,4 +25,8 @@ abstract class AbsStatePage(context: Context, layoutRes: Int) {
     }
 
     fun toViewGroup() = frameLayout
+
+    fun findView(idRes: Int) : View {
+        return _contentView.findViewById(idRes)
+    }
 }

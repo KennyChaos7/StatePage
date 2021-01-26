@@ -25,7 +25,7 @@ class SecondFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_second, container, false)
         val frameLayout = root.findViewById<View>(R.id.frameLayout)
 
-        statePage = ReloadingStatePage(requireContext())
+        statePage = ReloadingStatePage(requireContext()) {}
 
         StatePageManager.bind(frameLayout, statePage)
 
