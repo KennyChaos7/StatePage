@@ -17,10 +17,11 @@ abstract class AbsStatePage(context: Context, layoutRes: Int) {
         _contentView = LayoutInflater.from(context).inflate(layoutRes, frameLayout, true)
     }
 
-    fun setViewParamsAndHide(width: Int, height: Int) {
+    fun setViewParams(startX: Float, startY: Float, width: Int, height: Int) {
         val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(width, height)
         frameLayout.layoutParams = params
-        frameLayout.visibility = View.GONE
+        frameLayout.x = startX
+        frameLayout.y = startY
     }
 
     fun toViewGroup() = frameLayout
