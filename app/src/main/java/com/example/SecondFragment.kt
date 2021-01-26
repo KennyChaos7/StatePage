@@ -1,6 +1,7 @@
 package com.example
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,9 +23,11 @@ class SecondFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val root: View = inflater.inflate(R.layout.fragment_second, container, false)
+        val frameLayout = root.findViewById<View>(R.id.frameLayout)
+
         statePage = ReloadingStatePage(requireContext())
 
-        StatePageManager.bind(root, statePage)
+        StatePageManager.bind(frameLayout, statePage)
 
         return root
     }
@@ -34,7 +37,13 @@ class SecondFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_second).setOnClickListener {
 //            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-            StatePageManager.show<ReloadingStatePage>(statePage)
+           StatePageManager.show<ReloadingStatePage>(statePage)
+
+           Handler().postDelayed(
+                   Runnable {
+                       StatePageManager.dismiss<ReloadingStatePage>(statePage)
+                   }, 5000
+           )
         }
     }
 

@@ -32,13 +32,64 @@ object StatePageManager {
     fun <T: AbsStatePage> show(statePage: T) : T? {
         LogUtil.E("binderCache size = ${binderCache.size}")
         binderCache.forEach {
-            if (it.absStatePage == statePage)
-            {
-                statePage.toViewGroup().visibility = View.VISIBLE
+            if (it.absStatePage == statePage) {
+                if (it.targetView == null || it.targetViewParent == null)
+                    return null
+                if (it.targetViewParent.indexOfChild(statePage.toViewGroup()) == -1) {
+                    //TODO startx和starty可能需要计算toolbar之类的
+                    statePage.setViewParams(
+                            it.targetView.x,
+                            it.targetView.y,
+                            it.targetView.layoutParams.width,
+                            it.targetView.layoutParams.height
+                    )
+                    LogUtil.E("before child list size = ${it.targetViewParent.childCount}")
+                    it.targetViewParent.addView(statePage.toViewGroup(), it.targetViewParent.childCount)
+                    LogUtil.E("after child list size = ${it.targetViewParent.childCount}")
+                }
                 return statePage
             }
         }
         return null
+    }
+
+    fun <T: AbsStatePage> dismiss(statePage: T) : T? {
+        LogUtil.E("binderCache size = ${binderCache.size}")
+        binderCache.forEach {
+            if (it.absStatePage == statePage) {
+                if (it.targetView == null || it.targetViewParent == null)
+                    return null
+                if (it.targetViewParent.indexOfChild(statePage.toViewGroup()) != -1) {
+                    LogUtil.E("before child list size = ${it.targetViewParent.childCount}")
+                    it.targetViewParent.removeView(statePage.toViewGroup())
+                    LogUtil.E("after child list size = ${it.targetViewParent.childCount}")
+                }
+                return statePage
+            }
+        }
+        return null
+    }
+
+    private fun <T: AbsStatePage> addStatePage(targetView: View, statePage: T) {
+        val binder = StatePageBinder(
+                targetView.context.javaClass.simpleName,
+                targetView.javaClass.name,
+                targetView,
+                getViewGroup(targetView),
+                statePage
+        )
+        LogUtil.E("addStatePage = $binder")
+        if (!binderCache.contains(binder)) {
+            binderCache.add(binder)
+        }
+    }
+
+    private fun getViewGroup(targetView: View) : ViewGroup {
+        var targetViewGroup = targetView.parent as ViewGroup?
+        if (targetViewGroup == null) {
+            targetViewGroup = targetView as ViewGroup
+        }
+        return targetViewGroup
     }
 
     @Deprecated("更换思路, 不再需要使用")
@@ -52,24 +103,5 @@ object StatePageManager {
             }
         }
         return 0
-    }
-
-    private fun <T: AbsStatePage> addStatePage(targetView: View, statePage: T) {
-        val binder = StatePageBinder(
-                targetView.context.javaClass.simpleName,
-                targetView.javaClass.name,
-                statePage
-        )
-        if (!binderCache.contains(binder)) {
-            var targetViewGroup = targetView.parent as ViewGroup?
-            if (targetViewGroup == null) {
-                targetViewGroup = targetView as ViewGroup
-            }
-            statePage.setViewParamsAndHide(targetViewGroup.layoutParams.width, targetViewGroup.layoutParams.height)
-            LogUtil.E("before child list size = ${targetViewGroup.childCount}")
-            targetViewGroup.addView(statePage.toViewGroup())
-            LogUtil.E("after child list size = ${targetViewGroup.childCount}")
-            binderCache.add(binder)
-        }
     }
 }
