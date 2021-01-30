@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity() {
             StatePageManager.dismiss<ReloadingStatePage>(statePage)
         }
 
-//        StatePageManager.bind(this, statePage)
-        StatePageManager.bind(content_main, statePage)
+        StatePageManager.bind(this, statePage)
+//        StatePageManager.bind(content_main, statePage)
 //        StatePageManager.bind(fab, statePage)
 //        StatePageManager.bind(linearLayout, statePage)
     }

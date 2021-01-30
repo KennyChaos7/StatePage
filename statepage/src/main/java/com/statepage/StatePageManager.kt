@@ -8,14 +8,14 @@ import java.util.concurrent.CopyOnWriteArraySet
 object StatePageManager {
     private val binderCache: CopyOnWriteArraySet<StatePageBinder> = CopyOnWriteArraySet()
 
+
     fun <T: AbsStatePage> bind(activity: Activity, statePage: T) {
         val targetView = activity.findViewById<ViewGroup>(android.R.id.content)
-        addStatePage(targetView, statePage)
+        addStatePage(targetView, targetView, statePage)
     }
 
-
     fun <T: AbsStatePage> bind(targetView: View, statePage: T) {
-        addStatePage(targetView, statePage)
+        addStatePage(targetView, getViewGroup(targetView), statePage)
     }
 
     fun <T: AbsStatePage> unbind(statePage: T) {
@@ -70,12 +70,12 @@ object StatePageManager {
         return null
     }
 
-    private fun <T: AbsStatePage> addStatePage(targetView: View, statePage: T) {
+    private fun <T: AbsStatePage> addStatePage(targetView: View, targetViewGroup: ViewGroup,statePage: T) {
         val binder = StatePageBinder(
                 targetView.context.javaClass.simpleName,
                 targetView.javaClass.name,
                 targetView,
-                getViewGroup(targetView),
+                targetViewGroup,
                 statePage
         )
         LogUtil.E("addStatePage = $binder")
