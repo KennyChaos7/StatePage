@@ -1,12 +1,12 @@
 package com.example
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.statepage.StatePageManager
 import com.statepage.simple.ReloadingStatePage
 
@@ -25,19 +25,23 @@ class MainActivity : AppCompatActivity() {
 //                    .setAction("Action", null).show()
             StatePageManager.show<ReloadingStatePage>(statePage)
 
-            Handler().postDelayed(
-                    Runnable {
-                        StatePageManager.dismiss<ReloadingStatePage>(statePage)
-                    }, 5000
-            )
+//            Handler().postDelayed(
+//                    Runnable {
+//                        StatePageManager.dismiss<ReloadingStatePage>(statePage)
+//                    }, 5000
+//            )
         }
         val content_main = findViewById<View>(R.id.content_main)
         val linearLayout = findViewById<View>(R.id.linearLayout)
 
-        statePage = ReloadingStatePage(this)
+        statePage = ReloadingStatePage(this) {
+            Snackbar.make(statePage.toViewGroup(), "Reloading", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show()
+            StatePageManager.dismiss<ReloadingStatePage>(statePage)
+        }
 
-//        StatePageManager.bind(this, statePage)
-        StatePageManager.bind(content_main, statePage)
+        StatePageManager.bind(this, statePage)
+//        StatePageManager.bind(content_main, statePage)
 //        StatePageManager.bind(fab, statePage)
 //        StatePageManager.bind(linearLayout, statePage)
     }

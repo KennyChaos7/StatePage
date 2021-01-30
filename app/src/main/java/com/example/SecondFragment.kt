@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.statepage.AbsStatePage
 import com.statepage.StatePageManager
-import com.statepage.simple.ReloadingStatePage
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SecondFragment : Fragment() {
 
-    private lateinit var statePage: ReloadingStatePage
+    private lateinit var statePage: AbsStatePage
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -25,9 +25,10 @@ class SecondFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_second, container, false)
         val frameLayout = root.findViewById<View>(R.id.frameLayout)
 
-        statePage = ReloadingStatePage(requireContext())
+//        statePage = ReloadingStatePage(requireContext()) {}
+//        statePage = StatePageManager.defaultBind<ReloadingStatePage>(frameLayout){}
 
-        StatePageManager.bind(frameLayout, statePage)
+//        StatePageManager.bind(frameLayout, statePage)
 
         return root
     }
@@ -37,11 +38,11 @@ class SecondFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_second).setOnClickListener {
 //            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-           StatePageManager.show<ReloadingStatePage>(statePage)
+           StatePageManager.show(statePage)
 
            Handler().postDelayed(
                    Runnable {
-                       StatePageManager.dismiss<ReloadingStatePage>(statePage)
+                       StatePageManager.dismiss(statePage)
                    }, 5000
            )
         }
@@ -49,6 +50,6 @@ class SecondFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        StatePageManager.unbind<ReloadingStatePage>(statePage)
+        StatePageManager.unbind(statePage)
     }
 }
