@@ -9,7 +9,6 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.statepage.AbsStatePage
 import com.statepage.StatePageManager
-import com.statepage.simple.ReloadingStatePage
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -27,7 +26,7 @@ class SecondFragment : Fragment() {
         val frameLayout = root.findViewById<View>(R.id.frameLayout)
 
 //        statePage = ReloadingStatePage(requireContext()) {}
-        statePage = StatePageManager.defaultBind<ReloadingStatePage>(frameLayout){}
+//        statePage = StatePageManager.defaultBind<ReloadingStatePage>(frameLayout){}
 
 //        StatePageManager.bind(frameLayout, statePage)
 
