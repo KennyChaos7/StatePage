@@ -5,19 +5,37 @@ import android.view.View
 import android.view.ViewGroup
 import java.util.concurrent.CopyOnWriteArraySet
 
+/**
+ * statePage的统一控制器
+ * statePage本身不自带show/dismiss方法，只能通过statePage的bind方法
+ * 保存绑定关系的缓存数组binderCache为线程安全
+ */
 object StatePageManager {
     private val binderCache: CopyOnWriteArraySet<StatePageBinder> = CopyOnWriteArraySet()
 
 
+    /**
+     * 跟要覆盖的view进行绑定关系
+     * 针对直接传入activity进行特殊化处理
+     */
+    @JvmStatic
     fun <T: AbsStatePage> bind(activity: Activity, statePage: T) {
         val targetView = activity.findViewById<ViewGroup>(android.R.id.content)
         addStatePage(targetView, targetView, statePage)
     }
 
+    /**
+     * 跟要覆盖的view进行绑定关系
+     */
+    @JvmStatic
     fun <T: AbsStatePage> bind(targetView: View, statePage: T) {
         addStatePage(targetView, getViewGroup(targetView), statePage)
     }
 
+    /**
+     * 解除并回收已经进行了绑定关系的StatePage
+     */
+    @JvmStatic
     fun <T: AbsStatePage> unbind(statePage: T) {
         LogUtil.E("before binderCache size = ${binderCache.size}")
         binderCache.forEach {
@@ -29,6 +47,11 @@ object StatePageManager {
         LogUtil.E("after binderCache size = ${binderCache.size}")
     }
 
+    /**
+     * 显示单个statePage
+     * 动态addView方式
+     */
+    @JvmStatic
     fun <T: AbsStatePage> show(statePage: T) : T? {
         LogUtil.E("binderCache size = ${binderCache.size}")
         binderCache.forEach {
@@ -53,6 +76,10 @@ object StatePageManager {
         return null
     }
 
+    /**
+     * 隐藏单个statePage
+     */
+    @JvmStatic
     fun <T: AbsStatePage> dismiss(statePage: T) : T? {
         LogUtil.E("binderCache size = ${binderCache.size}")
         binderCache.forEach {
@@ -70,6 +97,9 @@ object StatePageManager {
         return null
     }
 
+    /**
+     * 将statePage格式化成一个StatePageBinder对象并保存在binderCache中
+     */
     private fun <T: AbsStatePage> addStatePage(targetView: View, targetViewGroup: ViewGroup,statePage: T) {
         val binder = StatePageBinder(
                 targetView.context.javaClass.simpleName,
@@ -84,8 +114,12 @@ object StatePageManager {
         }
     }
 
+    /**
+     * 获取需要被覆盖的view的父布局对象viewGroup
+     */
     private fun getViewGroup(targetView: View) : ViewGroup {
         var targetViewGroup = targetView.parent as ViewGroup?
+        //  如果此view本身就是整个页面的最外层布局的话，则没有viewGroup
         if (targetViewGroup == null) {
             targetViewGroup = targetView as ViewGroup
         }
